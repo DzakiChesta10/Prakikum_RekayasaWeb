@@ -1,0 +1,307 @@
+openapi: "3.0.2"
+info:
+  title: API Wisata
+  description: API untuk mengelola data wisata seperti destinasi, ulasan, dan rekomendasi wisata.
+  version: "1.0.0"
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: Admin API Wisata
+    email: admin@wisata.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: http://api.wisata.com/v1
+    description: Production server
+  - url: http://api-staging.wisata.com/v1
+    description: Staging server
+tags:
+  - name: Destinasi
+    description: Endpoint terkait dengan pengelolaan destinasi wisata
+  - name: Ulasan
+    description: Endpoint untuk mengelola ulasan dari pengguna
+  - name: Rekomendasi
+    description: Endpoint untuk mendapatkan rekomendasi destinasi wisata
+paths:
+  /destinasi:
+    get:
+      tags:
+        - Destinasi
+      summary: Mendapatkan daftar destinasi wisata
+      description: Mengambil semua destinasi wisata yang terdaftar
+      operationId: getDestinasi
+      responses:
+        '200':
+          description: Daftar destinasi berhasil diambil
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Destinasi'
+        '500':
+          description: Kesalahan server
+    post:
+      tags:
+        - Destinasi
+      summary: Menambah destinasi wisata baru
+      description: Menambah destinasi baru kedalam daftar
+      operationId: addDestinasi
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinasiInput'
+      responses:
+        '201':
+          description: Destinasi berhasil ditambahkan
+        '400':
+          description: Data tidak valid
+  /destinasi/{id}:
+    get:
+      tags:
+        - Destinasi
+      summary: Mendapatkan detail destinasi
+      description: Mendapatkan informasi detail destinasi wisata berdasarkan ID
+      operationId: getDestinasiById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID destinasi
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Detail destinasi berhasil diambil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Destinasi'
+        '404':
+          description: Destinasi tidak ditemukan
+        '500':
+          description: Kesalahan server
+    put:
+      tags:
+        - Destinasi
+      summary: Memperbarui data destinasi
+      description: Mengubah data destinasi berdasarkan ID
+      operationId: updateDestinasi
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID Destinasi yang akan diperbarui
+          schema: 
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DestinasiInput'
+      responses:
+        '200':
+          description: Data destinasi berhasil diperbarui
+        '400': 
+          description: Data tidak valid
+        '404':
+          description: Destinasi tidak ditemukan
+        '500':
+          description: Kesalahan server
+    delete:
+      tags:
+        - Destinasi
+      summary: Menghapus destinasi wisata
+      description: Menghapus destinasi wisata berdasarkan ID
+      operationId: deleteDestinasi
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID destinasi yang akan dihapus
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Destinasi berhasil dihapus
+        '404':
+          description: Destinasi tidak ditemukan
+        '500':
+          description: Kesalahan server
+  /ulasan:
+    get:
+      tags:
+        - Ulasan
+      summary: Mendapatkan daftar ulasan pengguna
+      description: Menampilkan semua daftar ulasan pengguna
+      responses: 
+        '200': 
+          description: Daftar ulasan berhasil diambil
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ulasan'
+        '500':
+          description: Kesalahan server
+    post: 
+      tags:
+        - Ulasan
+      summary: Menambahkan ulasan baru
+      description: Menambahkan ulasan pengguna baru
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema: 
+              type: object
+              properties: 
+                destinasi_id:
+                  type: string
+                nama_pengguna:
+                  type: string
+                komentar:
+                  type: string
+                rating: 
+                  type: number
+                  format: float
+      responses: 
+        '201':
+          description: Ulasan berhasil ditambahkan
+  /ulasan/{id}:
+    get:
+      tags:
+        - Ulasan
+      summary: Mendapatkan detail ulasan pengguna
+      description: Mendapatkan detail ulasan pengguna berdasarkan ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID ulasan yang akan diambil
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Detail ulasan pengguna berhasil diambil
+        '204':
+          description: Tidak ada data ulasan untuk ID tersebut
+        '404':
+          description: Ulasan tidak ditemukan
+        '500':
+          description: Kesalahan server
+  /rekomendasi:
+    get:
+      tags:
+        - Rekomendasi
+      summary: Mendapatkan rekomendasi destinasi wisata
+      description: Menampilkan daftar rekomendasi destinasi wisata
+      responses:
+        '200':
+          description: Rekomendasi berhasil diambil
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Destinasi'
+        '500':
+          description: Kesalahan server
+  /rekomendasi/{id}:
+    get:
+      tags: 
+        - Rekomendasi
+      summary: Mendapatkan detail rekomendasi destinasi wisata
+      description: Menampilkan detail rekomendasi destinasi wisata berdasarkan ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID rekomendasi yang akan diambil
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Rekomendasi berhasil diambil
+        '204':
+          description: Tidak ada data rekomendasi untuk ID tersebut
+        '404':
+          description: Rekomendasi tidak ditemukan
+        '500':
+          description: Kesalahan server
+components:
+  schemas:
+    Destinasi:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID unik destinasi
+        nama:
+          type: string
+          description: Nama destinasi wisata
+        lokasi:
+          type: string
+          description: Lokasi destinasi wisata
+        deskripsi:
+          type: string
+          description: Deskripsi destinasi wisata
+        rating:
+          type: number
+          format: float
+          description: Rating rata-rata destinasi
+    DestinasiInput:
+      type: object
+      properties:
+        nama:
+          type: string
+          description: Nama destinasi wisata
+        lokasi:
+          type: string
+          description: Lokasi destinasi wisata
+        deskripsi:
+          type: string
+          description: Deskripsi destinasi wisata
+      required:
+        - nama
+        - lokasi
+    Ulasan:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID unik ulasan
+        destinasi_id:
+          type: string
+          description: ID destinasi yang diulas
+        nama_pengguna:
+          type: string
+          description: Nama pengguna yang memberikan ulasan
+        komentar:
+          type: string
+          description: Isi ulasan pengguna
+        rating:
+          type: number
+          format: float
+          description: Nilai rating yang diberikan pengguna
+    UlasanInput:
+      type: object
+      properties:
+        destinasi_id:
+          type: string
+        nama_pengguna:
+          type: string
+        komentar:
+          type: string
+        rating:
+          type: number
+          format: float
+      required:
+        - destinasi_id
+        - nama_pengguna
+        - komentar
+        - rating
