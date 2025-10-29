@@ -1,0 +1,363 @@
+openapi: "3.0.2"
+info:
+  title: API Perpustakaan
+  description: API untuk mengelola data buku, anggota, dan peminjaman di perpustakaan.
+  version: "1.0.0"
+  contact:
+    name: Admin API Perpustakaan
+    email: admin@perpustakaan.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: http://api.perpustakaan.com/v1
+    description: Production server
+  - url: http://staging.perpustakaan.com/v1
+    description: Staging server
+tags:
+  - name: Buku
+    description: Endpoint untuk mengelola data buku di perpustakaan
+  - name: Anggota
+    description: Endpoint untuk mengelola data anggota perpustakaan
+  - name: Peminjaman
+    description: Endpoint untuk mengelola data peminjaman buku
+paths:
+  /buku:
+    get:
+      tags:
+        - Buku
+      summary: Mendapatkan daftar buku
+      description: Mengambil semua buku yang tersedia di perpustakaan
+      operationId: getAllBuku
+      responses:
+        '200':
+          description: Daftar buku berhasil diambil
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Buku'
+        '500':
+          description: Kesalahan server
+    post:
+      tags:
+        - Buku
+      summary: Menambahkan buku baru
+      description: Menambahkan data buku baru ke dalam koleksi perpustakaan
+      operationId: addBuku
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BukuInput'
+      responses:
+        '201':
+          description: Buku berhasil ditambahkan
+        '400':
+          description: Data tidak valid
+  /buku/{id}:
+    get:
+      tags:
+        - Buku
+      summary: Mendapatkan detail buku
+      description: Mengambil informasi detail buku berdasarkan ID
+      operationId: getBukuById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID buku yang akan diambil
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Detail buku berhasil diambil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Buku'
+        '404':
+          description: Buku tidak ditemukan
+        '500':
+          description: Kesalahan server
+    put:
+      tags:
+        - Buku
+      summary: Memperbarui data buku
+      description: Mengubah data buku berdasarkan ID
+      operationId: updateBuku
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID buku yang akan diperbarui
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BukuInput'
+      responses:
+        '200':
+          description: Data buku berhasil diperbarui
+        '400':
+          description: Data tidak valid
+        '404':
+          description: Buku tidak ditemukan
+        '500':
+          description: Kesalahan server
+    delete:
+      tags:
+        - Buku
+      summary: Menghapus buku
+      description: Menghapus data buku berdasarkan ID
+      operationId: deleteBuku
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID buku yang akan dihapus
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Buku berhasil dihapus
+        '404':
+          description: Buku tidak ditemukan
+        '500':
+          description: Kesalahan server
+  /anggota:
+    get:
+      tags:
+        - Anggota
+      summary: Mendapatkan daftar anggota
+      description: Mengambil semua data anggota perpustakaan
+      operationId: getAllAnggota
+      responses:
+        '200':
+          description: Daftar anggota berhasil diambil
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Anggota'
+        '500':
+          description: Kesalahan server
+    post:
+      tags:
+        - Anggota
+      summary: Menambahkan anggota baru
+      description: Menambahkan data anggota baru ke sistem perpustakaan
+      operationId: addAnggota
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnggotaInput'
+      responses:
+        '201':
+          description: Anggota berhasil ditambahkan
+        '400':
+          description: Data tidak valid
+  /anggota/{id}:
+    get:
+      tags:
+        - Anggota
+      summary: Mendapatkan detail anggota
+      description: Mengambil informasi detail anggota berdasarkan ID
+      operationId: getAnggotaById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID anggota yang akan diambil
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Detail anggota berhasil diambil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Anggota'
+        '404':
+          description: Anggota tidak ditemukan
+        '500':
+          description: Kesalahan server
+  /peminjaman:
+    get:
+      tags:
+        - Peminjaman
+      summary: Mendapatkan daftar peminjaman buku
+      description: Mengambil seluruh data transaksi peminjaman buku
+      operationId: getAllPeminjaman
+      responses:
+        '200':
+          description: Daftar peminjaman berhasil diambil
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Peminjaman'
+        '500':
+          description: Kesalahan server
+    post:
+      tags:
+        - Peminjaman
+      summary: Menambahkan transaksi peminjaman
+      description: Menambahkan data peminjaman buku baru
+      operationId: addPeminjaman
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PeminjamanInput'
+      responses:
+        '201':
+          description: Transaksi peminjaman berhasil ditambahkan
+        '400':
+          description: Data tidak valid
+  /peminjaman/{id}:
+    get:
+      tags:
+        - Peminjaman
+      summary: Mendapatkan detail peminjaman
+      description: Mengambil informasi detail transaksi peminjaman berdasarkan ID
+      operationId: getPeminjamanById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID transaksi peminjaman
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Detail peminjaman berhasil diambil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Peminjaman'
+        '404':
+          description: Data peminjaman tidak ditemukan
+        '500':
+          description: Kesalahan server
+components:
+  schemas:
+    Buku:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID unik buku
+        judul:
+          type: string
+          description: Judul buku
+        penulis:
+          type: string
+          description: Nama penulis buku
+        penerbit:
+          type: string
+          description: Nama penerbit buku
+        tahun_terbit:
+          type: integer
+          description: Tahun terbit buku
+        kategori:
+          type: string
+          description: Kategori buku
+    BukuInput:
+      type: object
+      required:
+        - judul
+        - penulis
+        - penerbit
+        - tahun_terbit
+      properties:
+        judul:
+          type: string
+        penulis:
+          type: string
+        penerbit:
+          type: string
+        tahun_terbit:
+          type: integer
+        kategori:
+          type: string
+    Anggota:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID unik anggota
+        nama:
+          type: string
+          description: Nama anggota
+        alamat:
+          type: string
+          description: Alamat tempat tinggal anggota
+        email:
+          type: string
+          description: Alamat email anggota
+        no_telepon:
+          type: string
+          description: Nomor telepon anggota
+    AnggotaInput:
+      type: object
+      required:
+        - nama
+        - alamat
+        - email
+      properties:
+        nama:
+          type: string
+        alamat:
+          type: string
+        email:
+          type: string
+        no_telepon:
+          type: string
+    Peminjaman:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID unik transaksi peminjaman
+        anggota_id:
+          type: string
+          description: ID anggota yang meminjam
+        buku_id:
+          type: string
+          description: ID buku yang dipinjam
+        tanggal_pinjam:
+          type: string
+          format: date
+          description: Tanggal buku dipinjam
+        tanggal_kembali:
+          type: string
+          format: date
+          description: Tanggal buku dikembalikan
+    PeminjamanInput:
+      type: object
+      required:
+        - anggota_id
+        - buku_id
+        - tanggal_pinjam
+      properties:
+        anggota_id:
+          type: string
+        buku_id:
+          type: string
+        tanggal_pinjam:
+          type: string
+          format: date
+        tanggal_kembali:
+          type: string
+          format: date
